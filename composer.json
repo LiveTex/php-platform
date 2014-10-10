@@ -1,0 +1,23 @@
+{
+    "name": "tebryaev/php-platform",
+    "authors": [
+        {
+            "name": "Tebryaev Oleg",
+            "email": "oleg@tebryaev.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "packaged/thrift": "dev-master",
+        "illuminate/database": "4.2.*",
+        "illuminate/redis": "4.2.*",
+        "illuminate/cache": "4.2.*",
+        "illuminate/filesystem": "4.2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Platform": "src/"
+        }
+    }
+}

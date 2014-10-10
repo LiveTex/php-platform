@@ -40,7 +40,7 @@ class Endpoint
             $handlerClassName = "Handler{$this->config->service}";
 
             if (!class_exists($handlerClassName)) {
-                throw new Exception('Handler for service not found (' . $handlerClassName . ')');
+                throw new \Exception('Handler for service not found (' . $handlerClassName . ')');
             }
             $handler = new $handlerClassName();
 
@@ -48,14 +48,14 @@ class Endpoint
              * Required thrift generated files
              */
 
+            set_include_path(get_include_path().':thrift');
+
             $required_files = [
-                "thrift/{$this->config->namespace}/{$this->config->service}Service.php",
-                "thrift/{$this->config->namespace}/Types.php"
+                "{$this->config->namespace}/{$this->config->service}Service.php",
+                "{$this->config->namespace}/Types.php"
             ];
 
-            foreach ($required_files as $file) {
-                require_once $file;
-            }
+            foreach ($required_files as $file) require_once "{$file}";
 
             /**
              * Initialize service processor
@@ -64,8 +64,9 @@ class Endpoint
             $serviceProcessorClassName = "\\{$this->config->namespace}\\{$this->config->service}ServiceProcessor";
 
             if (!class_exists($serviceProcessorClassName)) {
-                throw new Exception('Service processor not found (' . $serviceProcessorClassName . ')');
+                throw new \Exception('Service processor not found (' . $serviceProcessorClassName . ')');
             }
+
             $processor = new $serviceProcessorClassName($handler);
 
             /**
@@ -74,7 +75,7 @@ class Endpoint
             $processor->process($protocol, $protocol);
 
             $transport->close();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             /**
              * Throw exception
              */

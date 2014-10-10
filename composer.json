@@ -13,7 +13,8 @@
         "illuminate/database": "4.2.*",
         "illuminate/redis": "4.2.*",
         "illuminate/cache": "4.2.*",
-        "illuminate/filesystem": "4.2.*"
+        "illuminate/filesystem": "4.2.*",
+        "monolog/monolog": "1.11.*@dev"
     },
     "autoload": {
         "psr-0": {

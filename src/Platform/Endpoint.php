@@ -9,6 +9,7 @@ namespace Platform;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Transport\TPhpStream;
+use Thrift\Transport\THttpClient;
 
 class Endpoint
 {
@@ -23,7 +24,7 @@ class Endpoint
          * Подключаем сгенерированные трифтом файлы
          */
 
-        set_include_path(get_include_path() . ':app/thrift');
+        set_include_path(get_include_path() . ':'.app_path().'/thrift');
 
         $required_files = [
             "{$this->config->namespace}/{$this->config->service}.php",
@@ -133,7 +134,7 @@ class Endpoint
              */
 
             $transport->open();
-            $this->transport &= $transport;
+            $this->transport = &$transport;
 
         } catch (\Exception $exception) {
             echo $exception->getMessage();

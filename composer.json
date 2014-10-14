@@ -6,10 +6,10 @@
             "email": "oleg@tebryaev.com"
         }
     ],
-    "minimum-stability": "beta",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "packaged/thrift": "dev-master",
+        "packaged/thrift": "0.9.*",
         "laravel/framework": "4.2.*"
     },
     "autoload": {

@@ -55,7 +55,7 @@ class Endpoint
             set_include_path(get_include_path().':thrift');
 
             $required_files = [
-                "{$this->config->namespace}/{$this->config->service}Service.php",
+                "{$this->config->namespace}/{$this->config->service}.php",
                 "{$this->config->namespace}/Types.php"
             ];
 

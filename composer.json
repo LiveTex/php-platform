@@ -6,7 +6,7 @@
             "email": "oleg@tebryaev.com"
         }
     ],
-    "minimum-stability": "dev-master",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
         "packaged/thrift": "dev-master",

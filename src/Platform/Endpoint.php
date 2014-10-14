@@ -13,21 +13,17 @@ use Thrift\Transport\TPhpStream;
 class Endpoint
 {
     protected $config;
-<<<<<<< HEAD
     protected $transport = null;
-=======
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
 
     public function __construct(EndpointConfig $config)
     {
         $this->config = $config;
-<<<<<<< HEAD
 
         /**
          * Подключаем сгенерированные трифтом файлы
          */
 
-        set_include_path(get_include_path() . ':./app/thrift');
+        set_include_path(get_include_path() . ':app/thrift');
 
         $required_files = [
             "{$this->config->namespace}/{$this->config->service}.php",
@@ -48,19 +44,13 @@ class Endpoint
         if (!is_null($this->transport)) {
             $this->transport->close();
         }
-=======
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
     }
 
     public function process()
     {
         try {
             /**
-<<<<<<< HEAD
              * Инициализируем трифт транспорт
-=======
-             * Thrift Transport
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
              */
 
             $transport = new TBufferedTransport(
@@ -68,37 +58,24 @@ class Endpoint
             );
 
             /**
-<<<<<<< HEAD
              * Инициализация бинарного прототокола
-=======
-             * Initialize protocol
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
              */
 
             $protocol = new TBinaryProtocol($transport, true, true);
             $transport->open();
 
             /**
-<<<<<<< HEAD
              * Создаем хэндлел для обеспечения методов логикой
-=======
-             * Initialize service handler
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
              */
 
             $handlerClassName = "Handler{$this->config->service}";
 
             if (!class_exists($handlerClassName)) {
-<<<<<<< HEAD
                 throw new \Exception('Handler for service not found "' . $handlerClassName . '"');
-=======
-                throw new \Exception('Handler for service not found (' . $handlerClassName . ')');
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
             }
             $handler = new $handlerClassName();
 
             /**
-<<<<<<< HEAD
              * Создаем процессор
              */
 
@@ -166,47 +143,6 @@ class Endpoint
         return $client;
     }
 
-=======
-             * Required thrift generated files
-             */
-
-            set_include_path(get_include_path().':thrift');
-
-            $required_files = [
-                "{$this->config->namespace}/{$this->config->service}.php",
-                "{$this->config->namespace}/Types.php"
-            ];
-
-            foreach ($required_files as $file) require_once "{$file}";
-
-            /**
-             * Initialize service processor
-             */
-
-            $serviceProcessorClassName = "\\{$this->config->namespace}\\{$this->config->service}ServiceProcessor";
-
-            if (!class_exists($serviceProcessorClassName)) {
-                throw new \Exception('Service processor not found (' . $serviceProcessorClassName . ')');
-            }
-
-            $processor = new $serviceProcessorClassName($handler);
-
-            /**
-             * Process command
-             */
-            $processor->process($protocol, $protocol);
-
-            $transport->close();
-        } catch (\Exception $exception) {
-            /**
-             * Throw exception
-             */
-
-            echo $exception->getMessage();
-            exit(1);
-        }
-    }
->>>>>>> 6b5ff2def6c283cea27ce08a23e75051c535f3a2
 }
 
 

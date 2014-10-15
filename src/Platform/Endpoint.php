@@ -24,6 +24,7 @@ class Endpoint
          * Подключаем сгенерированные трифтом файлы
          */
 
+
         set_include_path(get_include_path() . ':' . app_path() . '/thrift');
 
         $required_files = [
@@ -94,11 +95,11 @@ class Endpoint
         $processor->process($protocol, $protocol);
 
         $transport->close();
+
     }
 
     public function getClient($host = '127.0.0.1', $port = 80, $path = '/')
     {
-
         /**
          * HTTP клиент
          */

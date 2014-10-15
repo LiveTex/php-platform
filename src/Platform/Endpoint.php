@@ -24,7 +24,6 @@ class Endpoint
          * Подключаем сгенерированные трифтом файлы
          */
 
-
         set_include_path(get_include_path() . ':' . app_path() . '/thrift');
 
         $required_files = [

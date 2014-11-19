@@ -70,6 +70,7 @@ class Endpoint
 
         $handlerClassName = "{$this->config->service}";
 
+
         if (!class_exists($handlerClassName)) {
             throw new \Exception('Handler for service not found "' . $handlerClassName . '"');
         }

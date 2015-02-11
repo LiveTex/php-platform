@@ -9,8 +9,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "packaged/thrift": "0.9.*",
-        "laravel/framework": "4.2.*"
+        "packaged/thrift": "0.9.*"
     },
     "autoload": {
         "psr-0": {

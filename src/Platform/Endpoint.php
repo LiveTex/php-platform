@@ -7,6 +7,7 @@
 namespace Platform;
 
 use Thrift\Protocol\TBinaryProtocol;
+use Thrift\Protocol\TJSONProtocol;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Transport\TPhpStream;
 use Thrift\Transport\THttpClient;
@@ -58,10 +59,16 @@ class Endpoint
         );
 
         /**
-         * Инициализация бинарного прототокола
+         * Пока наш клиент не умеет общаться по бинарному протоколу,
+         * инициализируем в зависимости от наличия заголовка
          */
+        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) )
+        {
+            $protocol = new TJSONProtocol($transport);
+        } else {
+            $protocol = new TBinaryProtocol($transport, true, true);
+        }
 
-        $protocol = new TBinaryProtocol($transport, true, true);
         $transport->open();
 
         /**
@@ -111,7 +118,17 @@ class Endpoint
          */
 
         $transport = new TBufferedTransport($socket);
-        $protocol = new TBinaryProtocol($transport);
+
+        /**
+         * Пока наш клиент не умеет общаться по бинарному протоколу,
+         * инициализируем в зависимости от наличия заголовка
+         */
+        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) )
+        {
+            $protocol = new TJSONProtocol($transport);
+        } else {
+            $protocol = new TBinaryProtocol($transport);
+        }
 
         /**
          * Инициализируем клиент
@@ -136,5 +153,3 @@ class Endpoint
     }
 
 }
-
-

@@ -16,6 +16,8 @@ class Endpoint
 {
     protected $config;
     protected $transport = null;
+    
+    const PROTOCOL_JSON = 'JSON';
 
     public function __construct(EndpointConfig $config)
     {
@@ -62,7 +64,7 @@ class Endpoint
          * Пока наш клиент не умеет общаться по бинарному протоколу,
          * инициализируем в зависимости от наличия заголовка
          */
-        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] == 'JSON' )
+        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] === self::PROTOCOL_JSON )
         {
             $protocol = new TJSONProtocol($transport);
         } else {
@@ -123,7 +125,7 @@ class Endpoint
          * Пока наш клиент не умеет общаться по бинарному протоколу,
          * инициализируем в зависимости от наличия заголовка
          */
-        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] == 'JSON' )
+        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] === self::PROTOCOL_JSON )
         {
             $protocol = new TJSONProtocol($transport);
         } else {

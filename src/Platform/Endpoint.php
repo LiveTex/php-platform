@@ -16,7 +16,7 @@ class Endpoint
 {
     protected $config;
     protected $transport = null;
-    
+
     const PROTOCOL_JSON = 'JSON';
 
     public function __construct(EndpointConfig $config)
@@ -53,11 +53,22 @@ class Endpoint
     public function process()
     {
         /**
+         * Создаем хэндлел для обеспечения методов логикой
+         */
+
+        $handlerClassName = "{$this->config->service}";
+
+        if (!class_exists($handlerClassName)) {
+            throw new \Exception('Handler for service not found "' . $handlerClassName . '"');
+        }
+        $handler = new $handlerClassName();
+
+        /**
          * Инициализируем трифт транспорт
          */
 
         $transport = new TBufferedTransport(
-            new TPhpStream(TPhpStream::MODE_R | TPhpStream::MODE_W)
+            new Buffer($handlerClassName, TPhpStream::MODE_R | TPhpStream::MODE_W)
         );
 
         /**
@@ -72,18 +83,6 @@ class Endpoint
         }
 
         $transport->open();
-
-        /**
-         * Создаем хэндлел для обеспечения методов логикой
-         */
-
-        $handlerClassName = "{$this->config->service}";
-
-
-        if (!class_exists($handlerClassName)) {
-            throw new \Exception('Handler for service not found "' . $handlerClassName . '"');
-        }
-        $handler = new $handlerClassName();
 
         /**
          * Создаем процессор
@@ -102,9 +101,7 @@ class Endpoint
          */
 
         $processor->process($protocol, $protocol);
-
         $transport->close();
-
     }
 
     public function getClient($host = '127.0.0.1', $port = 80, $path = '/')
@@ -121,16 +118,7 @@ class Endpoint
 
         $transport = new TBufferedTransport($socket);
 
-        /**
-         * Пока наш клиент не умеет общаться по бинарному протоколу,
-         * инициализируем в зависимости от наличия заголовка
-         */
-        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] === self::PROTOCOL_JSON )
-        {
-            $protocol = new TJSONProtocol($transport);
-        } else {
-            $protocol = new TBinaryProtocol($transport);
-        }
+        $protocol = new TBinaryProtocol($transport);
 
         /**
          * Инициализируем клиент

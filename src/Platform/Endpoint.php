@@ -6,6 +6,7 @@
 
 namespace Platform;
 
+use Platform\Types\PlatformException;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Protocol\TJSONProtocol;
 use Thrift\Transport\TBufferedTransport;
@@ -58,28 +59,42 @@ class Endpoint
 
         $handlerClassName = "{$this->config->service}";
 
+
         if (!class_exists($handlerClassName)) {
-            throw new \Exception('Handler for service not found "' . $handlerClassName . '"');
+            throw new PlatformException('Handler for service not found "' . $handlerClassName . '"');
         }
         $handler = new $handlerClassName();
 
         /**
-         * Инициализируем трифт транспорт
-         */
-
-        $transport = new TBufferedTransport(
-            new Buffer($handlerClassName, TPhpStream::MODE_R | TPhpStream::MODE_W)
-        );
-
-        /**
          * Пока наш клиент не умеет общаться по бинарному протоколу,
          * инициализируем в зависимости от наличия заголовка
+         * От этого же будет зависеть и транспорт. Для бинарного протокола
+         * в транспорте будет происходить логирование.
          */
         if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] === self::PROTOCOL_JSON )
         {
+            /**
+             * JSON
+             */
+
+            $transport = new TBufferedTransport(
+                new TPhpStream(TPhpStream::MODE_R | TPhpStream::MODE_W)
+            );
+
             $protocol = new TJSONProtocol($transport);
+
         } else {
-            $protocol = new TBinaryProtocol($transport, true, true);
+
+            /**
+             * Binary
+             */
+
+            $transport = new TBufferedTransport(
+                new Buffer(TPhpStream::MODE_R | TPhpStream::MODE_W)
+            );
+
+            $protocol = new PlatformProtocol($transport, true, true);
+
         }
 
         $transport->open();
@@ -91,7 +106,7 @@ class Endpoint
         $serviceProcessorClassName = "\\{$this->config->namespace}\\{$this->config->service}Processor";
 
         if (!class_exists($serviceProcessorClassName)) {
-            throw new \Exception('Processor not found (' . $serviceProcessorClassName . ')');
+            throw new PlatformException('Processor not found (' . $serviceProcessorClassName . ')');
         }
 
         $processor = new $serviceProcessorClassName($handler);
@@ -101,8 +116,11 @@ class Endpoint
          */
 
         $processor->process($protocol, $protocol);
+
         $transport->close();
+
     }
+
 
     public function getClient($host = '127.0.0.1', $port = 80, $path = '/')
     {
@@ -127,7 +145,7 @@ class Endpoint
         $clientClassName = "\\{$this->config->namespace}\\{$this->config->service}Client";
 
         if (!class_exists($clientClassName)) {
-            throw new \Exception('Processor not found "' . $clientClassName . '"');
+            throw new PlatformException('Processor not found "' . $clientClassName . '"');
         }
 
         $client = new $clientClassName($protocol);

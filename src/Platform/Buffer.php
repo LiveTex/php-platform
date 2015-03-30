@@ -43,7 +43,7 @@ class Buffer extends TPhpStream {
     public function flush()
     {
 
-        if ( in_array( \Session::get("thrift_method"), \Config::get('allow_log_methods') ) ) {
+        if ( in_array( \Session::get("thrift_method"), \Config::get('eventservice.allow_log_methods') ) ) {
 
             /**
              * Сохраним результат для логирования

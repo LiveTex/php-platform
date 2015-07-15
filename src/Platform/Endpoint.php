@@ -16,8 +16,9 @@ class Endpoint
 {
     protected $config;
     protected $transport = null;
-    
+
     const PROTOCOL_JSON = 'JSON';
+    const PROTOCOL_BINARY = 'BINARY';
 
     public function __construct(EndpointConfig $config)
     {
@@ -107,8 +108,15 @@ class Endpoint
 
     }
 
-    public function getClient($host = '127.0.0.1', $port = 80, $path = '/')
+    public function getClient($host = '127.0.0.1', $port = 80, $path = '/', $protocolType=null)
     {
+        /**
+         * default binary protocol
+         */
+        if (is_null($protocolType)) {
+            $protocolType = self::PROTOCOL_BINARY;
+        }
+
         /**
          * HTTP клиент
          */
@@ -122,10 +130,16 @@ class Endpoint
         $transport = new TBufferedTransport($socket);
 
         /**
-         * Пока наш клиент не умеет общаться по бинарному протоколу,
-         * инициализируем в зависимости от наличия заголовка
+         * init protocol
          */
-        $protocol = new TBinaryProtocol($transport);
+        $protocolType = ucfirst(mb_strtolower($protocolType));
+        $func = sprintf("init%sProtocol", $protocolType);
+
+        if (method_exists($this, $func) && is_callable([$this, $func])) {
+            $protocol = call_user_func([$this, $func], $transport);
+        } else {
+            $protocol = $this->initBinaryProtocol($transport);
+        }
 
         /**
          * Инициализируем клиент
@@ -149,4 +163,25 @@ class Endpoint
         return $client;
     }
 
+
+    /**
+     * Init binary protocol
+     * @param $transport
+     * @return TBinaryProtocol
+     */
+    private function initBinaryProtocol($transport)
+    {
+        return new TBinaryProtocol($transport, true, true);
+    }
+
+
+    /**
+     * Init json protocol
+     * @param $transport
+     * @return TJSONProtocol
+     */
+    private function initJsonProtocol($transport)
+    {
+        return new TJSONProtocol($transport);
+    }
 }

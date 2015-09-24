@@ -65,10 +65,12 @@ class Endpoint
          * Пока наш клиент не умеет общаться по бинарному протоколу,
          * инициализируем в зависимости от наличия заголовка
          */
-        if ( isset($_SERVER['HTTP_X_THRIFT_PROTOCOL']) && $_SERVER['HTTP_X_THRIFT_PROTOCOL'] === self::PROTOCOL_JSON )
-        {
+
+        if ( preg_match("/json/i", $_SERVER['CONTENT_TYPE']) ) {
+            \Log::info("Init json protocol");
             $protocol = new TJSONProtocol($transport);
         } else {
+            \Log::info("Init binary protocol");
             $protocol = new TBinaryProtocol($transport, true, true);
         }
 

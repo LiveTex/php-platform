@@ -66,7 +66,7 @@ class Endpoint
          * инициализируем в зависимости от наличия заголовка
          */
 
-        if ( preg_match("/json/i", $_SERVER['CONTENT_TYPE']) ) {
+        if ( preg_match("/json|plain/i", $_SERVER['CONTENT_TYPE']) ) {
             \Log::info("Init json protocol");
             $protocol = new TJSONProtocol($transport);
         } else {
